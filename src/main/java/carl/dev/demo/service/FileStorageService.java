@@ -14,11 +14,13 @@ import carl.dev.demo.repository.FileDBRepository;
 public class FileStorageService {
   @Autowired
   private FileDBRepository fileDBRepository;
+
   public FileDB store(MultipartFile file) throws IOException {
     String fileName = StringUtils.cleanPath(file.getOriginalFilename());
     FileDB FileDB = new FileDB(fileName, file.getContentType(), file.getBytes());
     return fileDBRepository.save(FileDB);
   }
+  
   public FileDB getFile(String id) {
     return fileDBRepository.findById(id).get();
   }
@@ -26,4 +28,9 @@ public class FileStorageService {
   public Stream<FileDB> getAllFiles() {
     return fileDBRepository.findAll().stream();
   }
+
+  public void deleteById(String id) {
+    fileDBRepository.deleteById(id);
+  } 
+
 }
