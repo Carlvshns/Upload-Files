@@ -3,6 +3,8 @@ package carl.dev.demo.endpoint;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +47,7 @@ public class FileController {
     List<ResponseFile> files = storageService.getAllFiles().map(dbFile -> {
       String fileDownloadUri = ServletUriComponentsBuilder
           .fromCurrentContextPath()
-          .path("/files/")
+          .path("medias/files/")
           .path(dbFile.getId())
           .toUriString();
       return new ResponseFile(
@@ -69,5 +71,10 @@ public class FileController {
   public ResponseEntity<Void> deleteById(@PathVariable String id){
     storageService.deleteById(id);
     return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+  }
+
+  @GetMapping("/file/{id}")
+  public ResponseEntity<Resource> getFileMP4(@PathVariable String id){
+    return ResponseEntity.ok(new ByteArrayResource(storageService.getFile(id).getData()));
   }
 }
