@@ -1,12 +1,12 @@
 package carl.dev.demo.endpoint;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,7 +76,7 @@ public class FileController {
   }
 
   @GetMapping("/file/{id}")
-  public ResponseEntity<File> getFileMP4(@PathVariable String id) throws IOException{
-    return ResponseEntity.ok(new ByteArrayResource(storageService.getFile(id).getData()).getFile());
+  public ResponseEntity<Resource> getFileMP4(@PathVariable String id) throws IOException{
+    return ResponseEntity.ok(new ByteArrayResource(storageService.getFile(id).getData()));
   }
 }
