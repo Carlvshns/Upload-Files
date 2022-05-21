@@ -1,12 +1,13 @@
 package carl.dev.demo.endpoint;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import carl.dev.demo.domain.FileDB;
@@ -76,7 +78,37 @@ public class FileController {
   }
 
   @GetMapping("/file/{id}")
-  public ResponseEntity<Resource> getFileMP4(@PathVariable String id) throws IOException{
-    return ResponseEntity.ok(new ByteArrayResource(storageService.getFile(id).getData()));
+  public ResponseEntity<StreamingResponseBody> getFileMP4(@PathVariable String id) throws IOException{
+    
+    File file = new File("https://carlvs-cdn-video/herokuapp.com/medias/files/"+id);
+        if (!file.isFile()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+        }
+
+        StreamingResponseBody stream = out -> {
+
+            try {
+                final InputStream inputStream = new FileInputStream(file);
+
+                byte[] bytes = new byte[1024];
+                int length;
+                while ((length = inputStream.read(bytes)) >= 0) {
+                    out.write(bytes, 0, length);
+                }
+                inputStream.close();
+                out.flush();
+
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+
+        };
+
+        final HttpHeaders headers = new HttpHeaders();
+        
+        headers.add("Content-Length", Long.toString(file.length()));
+
+        return ResponseEntity.ok().headers(headers).body(stream);
   }
 }
