@@ -3,7 +3,6 @@ package carl.dev.demo.endpoint;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +24,12 @@ import carl.dev.demo.service.FileStorageService;
 @RestController
 @RequestMapping(value = "/medias")
 public class FileController {
-  @Autowired
+  
   private FileStorageService storageService;
+
+  public FileController(FileStorageService storageService) {
+    this.storageService = storageService;
+  }
 
   @PostMapping("/upload-file")
   public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
@@ -70,12 +73,5 @@ public class FileController {
   public ResponseEntity<Void> deleteById(@PathVariable String id){
     storageService.deleteById(id);
     return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-  }
-
-  @GetMapping("/file/{id}")
-  public FileDB getFileMP4(@PathVariable String id) {
-    FileDB fileDB = storageService.getFile(id);
-    return fileDB;
-  }
-    
+  } 
 }
