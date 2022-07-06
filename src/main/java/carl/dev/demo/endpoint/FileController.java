@@ -20,9 +20,12 @@ import carl.dev.demo.domain.FileDB;
 import carl.dev.demo.message.ResponseFile;
 import carl.dev.demo.message.ResponseMessage;
 import carl.dev.demo.service.FileStorageService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(value = "/medias")
+@Api(value = "Endpoints to manage this API")
 public class FileController {
   
   private FileStorageService storageService;
@@ -31,6 +34,7 @@ public class FileController {
     this.storageService = storageService;
   }
 
+  @ApiOperation(value = "Upload File to Storage in Database", response = ResponseMessage.class)
   @PostMapping("/upload-file")
   public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
     String message = "";
@@ -44,6 +48,7 @@ public class FileController {
     }
   }
 
+  @ApiOperation(value = "List all available Files with your URL", response = ResponseFile[].class)
   @GetMapping("/all-files")
   public ResponseEntity<List<ResponseFile>> getListFiles() {
     List<ResponseFile> files = storageService.getAllFiles().map(dbFile -> {
@@ -61,6 +66,7 @@ public class FileController {
     return ResponseEntity.status(HttpStatus.OK).body(files);
   }
 
+  @ApiOperation(value = "Generate download for specific File based on ID", response = byte[].class)
   @GetMapping("/files/{id}")
   public ResponseEntity<byte[]> getFileDownload(@PathVariable String id) {
     FileDB fileDB = storageService.getFile(id);
@@ -69,6 +75,7 @@ public class FileController {
         .body(fileDB.getData());
   }
 
+  @ApiOperation(value = "Remove one File based on ID", response = Void.class)
   @DeleteMapping("/delete-file/{id}")
   public ResponseEntity<Void> deleteById(@PathVariable String id){
     storageService.deleteById(id);
