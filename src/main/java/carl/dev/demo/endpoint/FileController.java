@@ -38,7 +38,7 @@ public class FileController {
 
   @ApiOperation(value = "Upload one File")
   @ApiResponses(value = {@ApiResponse(code = 201, message = "Uploaded File Successfully: 'File Name'!", response = ResponseFile[].class), 
-  @ApiResponse(code = 417, message = "Could Not Upload This File: 'File Name'!", response = ResponseFile[].class)})
+  @ApiResponse(code = 417, message = "Could Not Upload This File: 'File Name'!", response = ResponseMessage[].class)})
   @PostMapping(path = "/upload-file", consumes = "File/MultipartFile", produces = "application/json")
   public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
     String message = "";
