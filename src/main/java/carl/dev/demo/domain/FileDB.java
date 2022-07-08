@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
+
 @Entity
 @Table(name = "files")
 public class FileDB {

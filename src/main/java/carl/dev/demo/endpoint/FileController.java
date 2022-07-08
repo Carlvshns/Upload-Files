@@ -20,31 +20,41 @@ import carl.dev.demo.domain.FileDB;
 import carl.dev.demo.message.ResponseFile;
 import carl.dev.demo.message.ResponseMessage;
 import carl.dev.demo.service.FileStorageService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping(value = "/medias")
+@Api(value = "Endpoints to manage Files")
 public class FileController {
   
   private FileStorageService storageService;
 
   public FileController(FileStorageService storageService) {
-    this.storageService = storageService;
+  this.storageService = storageService;
   }
 
-  @PostMapping("/upload-file")
+  @ApiOperation(value = "Upload one File")
+  @ApiResponses(value = {@ApiResponse(code = 201, message = "Uploaded the file successfully: 'File Name'", response = ResponseFile[].class), 
+  @ApiResponse(code = 417, message = "Could not upload the file 'File Name'", response = ResponseFile[].class)})
+  @PostMapping(path = "/upload-file", consumes = "File/MultipartFile", produces = "application/json")
   public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
     String message = "";
     try {
       storageService.store(file);
       message = "Uploaded the file successfully: " + file.getOriginalFilename();
       return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(message));
-    } catch (Exception e) {
+    }catch (Exception e) {
       message = "Could not upload the file: " + file.getOriginalFilename() + "!";
       return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
     }
   }
 
-  @GetMapping("/all-files")
+  @ApiOperation(value = "List all available Files")
+  @ApiResponse(code = 200, message = "OK", response = ResponseFile[].class)
+  @GetMapping(path = "/all-files", produces = "application/json")
   public ResponseEntity<List<ResponseFile>> getListFiles() {
     List<ResponseFile> files = storageService.getAllFiles().map(dbFile -> {
       String fileDownloadUri = ServletUriComponentsBuilder
@@ -61,7 +71,9 @@ public class FileController {
     return ResponseEntity.status(HttpStatus.OK).body(files);
   }
 
-  @GetMapping("/files/{id}")
+  @ApiOperation(value = "Download a file based on ID")
+  @ApiResponse(code = 200, message = "OK", response = byte[].class)
+  @GetMapping(path = "/files/{id}", produces = "file-type/extension-file")
   public ResponseEntity<byte[]> getFileDownload(@PathVariable String id) {
     FileDB fileDB = storageService.getFile(id);
     return ResponseEntity.ok()
@@ -69,7 +81,9 @@ public class FileController {
         .body(fileDB.getData());
   }
 
-  @DeleteMapping("/delete-file/{id}")
+  @ApiOperation(value = "Delete a file based on ID")
+  @ApiResponse(code = 204, message = "No Content/Deleted", response = Void[].class)
+  @DeleteMapping(path = "/delete-file/{id}", produces = "application/json")
   public ResponseEntity<Void> deleteById(@PathVariable String id){
     storageService.deleteById(id);
     return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
