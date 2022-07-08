@@ -37,17 +37,17 @@ public class FileController {
   }
 
   @ApiOperation(value = "Upload one File")
-  @ApiResponses(value = {@ApiResponse(code = 201, message = "Uploaded the file successfully: 'File Name'", response = ResponseFile[].class), 
-  @ApiResponse(code = 417, message = "Could not upload the file 'File Name'", response = ResponseFile[].class)})
+  @ApiResponses(value = {@ApiResponse(code = 201, message = "Uploaded File Successfully: 'File Name'!", response = ResponseFile[].class), 
+  @ApiResponse(code = 417, message = "Could Not Upload This File: 'File Name'!", response = ResponseFile[].class)})
   @PostMapping(path = "/upload-file", consumes = "File/MultipartFile", produces = "application/json")
   public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
     String message = "";
     try {
       storageService.store(file);
-      message = "Uploaded the file successfully: " + file.getOriginalFilename();
+      message = "Uploaded File Successfully: " + file.getOriginalFilename();
       return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(message));
     }catch (Exception e) {
-      message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+      message = "Could Not Upload This File: " + file.getOriginalFilename() + "!";
       return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
     }
   }
@@ -71,20 +71,20 @@ public class FileController {
     return ResponseEntity.status(HttpStatus.OK).body(files);
   }
 
-  @ApiOperation(value = "Download a file based on ID")
-  @ApiResponse(code = 200, message = "OK", response = byte[].class)
+  @ApiOperation(value = "Download a File based on ID")
+  @ApiResponse(code = 200, message = "OK/Save FileName.FileExtension? 'dialog'", response = byte[].class)
   @GetMapping(path = "/files/{id}", produces = "file-type/extension-file")
-  public ResponseEntity<byte[]> getFileDownload(@PathVariable String id) {
+  public ResponseEntity<byte[]> getFileDownload(@PathVariable("id") String id) {
     FileDB fileDB = storageService.getFile(id);
     return ResponseEntity.ok()
         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
         .body(fileDB.getData());
   }
 
-  @ApiOperation(value = "Delete a file based on ID")
+  @ApiOperation(value = "Delete a File based on ID")
   @ApiResponse(code = 204, message = "No Content/Deleted", response = Void[].class)
-  @DeleteMapping(path = "/delete-file/{id}", produces = "application/json")
-  public ResponseEntity<Void> deleteById(@PathVariable String id){
+  @DeleteMapping(path = "/delete-file/{id}", produces = "application/empty-json")
+  public ResponseEntity<Void> deleteById(@PathVariable("id") String id){
     storageService.deleteById(id);
     return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
   } 

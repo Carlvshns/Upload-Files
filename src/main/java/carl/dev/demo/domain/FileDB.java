@@ -7,16 +7,22 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 @Table(name = "files")
 public class FileDB {
   @Id
   @GeneratedValue(generator = "uuid")
   @GenericGenerator(name = "uuid", strategy = "uuid2")
+  @ApiModelProperty(notes = "File ID/UUID", example = "bfc2c392-0809-4c67-8231-8137e31458df", required = true)
   private String id;
+  @ApiModelProperty(notes = "File Name", example = "Dragon_Ball_Super_Broly.webm")
   private String name;
+  @ApiModelProperty(notes = "File Content-Type", example = "video/webm")
   private String type;
   @Lob
+  @ApiModelProperty(notes = "File Data")
   private byte[] data;
   public FileDB() {
   }
