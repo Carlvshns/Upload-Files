@@ -82,7 +82,7 @@ public class FileController {
   }
 
   @ApiOperation(value = "Delete a File based on ID")
-  @ApiResponse(code = 204, message = "No Content/Deleted", response = Void[].class)
+  @ApiResponse(code = 204, message = "No Content/Deleted", response = Void.class)
   @DeleteMapping(path = "/delete-file/{id}", produces = "application/empty-json")
   public ResponseEntity<Void> deleteById(@PathVariable("id") String id){
     storageService.deleteById(id);
