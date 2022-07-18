@@ -28,7 +28,7 @@ public class BaseSwaggerConfig {
 
     private ApiInfo metaData(){
         return new ApiInfoBuilder().title("Upload and Storage Little Files")
-        .description("API Java 11 with Spring Boot 2.6.4 for Storage Files")
+        .description("API Java 11 with Spring Boot 2.6.4 to Storage Files")
         .version("1.0")
         .contact(new Contact("Carlos", "https://github.com/Carlvshns", "No email"))
         .license("Hobby Dev Project/Apache LICENSE 2.0")
