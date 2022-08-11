@@ -3,6 +3,7 @@ package carl.dev.demo.endpoint;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,8 +56,8 @@ public class FileController {
   @ApiOperation(value = "List all available Files")
   @ApiResponse(code = 200, message = "OK", response = ResponseFile[].class)
   @GetMapping(path = "/all-files", produces = "application/json")
-  public ResponseEntity<List<ResponseFile>> getListFiles() {
-    List<ResponseFile> files = storageService.getAllFiles().map(dbFile -> {
+  public ResponseEntity<List<ResponseFile>> getListFiles(Pageable pageable) {
+    List<ResponseFile> files = storageService.getAllFiles(pageable).map(dbFile -> {
       String fileDownloadUri = ServletUriComponentsBuilder
           .fromCurrentContextPath()
           .path("medias/files/")

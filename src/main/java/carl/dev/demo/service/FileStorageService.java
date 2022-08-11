@@ -3,6 +3,7 @@ package carl.dev.demo.service;
 import java.io.IOException;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,8 +26,8 @@ public class FileStorageService {
     return fileDBRepository.findById(id).get();
   }
   
-  public Stream<FileDB> getAllFiles() {
-    return fileDBRepository.findAll().stream();
+  public Stream<FileDB> getAllFiles(Pageable pageable) {
+    return fileDBRepository.findAll(pageable).stream();
   }
 
   public void deleteById(String id) {
